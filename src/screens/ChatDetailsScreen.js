@@ -1,152 +1,168 @@
-import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  TextInput,
-  Image,
-  TouchableOpacity,
-  Platform,
-} from "react-native";
-import {
-  ChevronLeftIcon,
-  FaceSmileIcon,
-  PaperAirplaneIcon,
-  PhotoIcon,
-} from "react-native-heroicons/outline";
-import { EllipsisHorizontalIcon } from "react-native-heroicons/solid";
-import { heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { View, Text, FlatList, Image, TextInput, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRoute } from "@react-navigation/native"; // To access passed data
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { Ionicons } from "@expo/vector-icons";
 
-const android = Platform.OS === "android";
+export default function ChatDetailsScreen() {
+  const route = useRoute();
+  const { chat, imgUrl, name, isOnline } = route.params; // Destructure passed data
 
-export default function ChatDetailsScreen({ route }) {
-  const navigation = useNavigation();
-  const { chat, imgUrl, name, age } = route.params;
+  const [message, setMessage] = React.useState("");
+  const [chatMessages, setChatMessages] = React.useState(chat); // Use state to manage chat
+
+  // Logic to handle team routing based on the user's message
+  const handleTeamEscalation = (userMessage) => {
+    let teamResponse;
+    if (userMessage.toLowerCase().includes("transaction")) {
+      teamResponse = {
+        sender: "General Support",
+        message: "Hi, I'm from General Support. I can help with your transaction issue.",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+    } else if (userMessage.toLowerCase().includes("fraud") || userMessage.toLowerCase().includes("suspicious")) {
+      teamResponse = {
+        sender: "Fraud Detection Team",
+        message: "Hi, this is the Fraud Detection Team. We will investigate this suspicious activity. Please provide the card last 4 digits and transaction details",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+    } else if (userMessage.toLowerCase().includes("loan") || userMessage.toLowerCase().includes("apply")) {
+      teamResponse = {
+        sender: "Loan Assistance",
+        message: "Hi, I'm from Loan Assistance. I can guide you through the loan application process.",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+    } else {
+      teamResponse = {
+        sender: "General Support",
+        message: "It seems like your query doesn't fit in one of our teams. I will assist you directly.",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+    }
+
+    // Simulate rerouting if needed
+    setTimeout(() => {
+      if (teamResponse.sender === "General Support" && userMessage.toLowerCase().includes("fraud")) {
+        const reroutedMessage = {
+          sender: "Fraud Detection Team",
+          message: "This issue seems to be fraud-related. Let me reroute you to the Fraud Detection Team.",
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        };
+        setChatMessages((prevChat) => [...prevChat, reroutedMessage]);
+      }
+    }, 2000);
+
+    return teamResponse;
+  };
+
+  const handleSendMessage = () => {
+    const newMessage = {
+      sender: "me",
+      message: message,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    // Add the user's message to the chat
+    setChatMessages((prevChat) => [...prevChat, newMessage]);
+
+    // Check if escalation is required before responding with a default message
+    let escalationResponse = handleTeamEscalation(message);
+    
+    // If escalation is needed, set the team response, otherwise proceed with the default bot response
+    if (escalationResponse) {
+      setTimeout(() => {
+        setChatMessages((prevChat) => [...prevChat, escalationResponse]);
+      }, 3000);
+    } else {
+      setTimeout(() => {
+        const botResponse = {
+          sender: "AI Bot",
+          message: "Let me check that for you...",
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        };
+        setChatMessages((prevChat) => [...prevChat, botResponse]);
+      }, 1000);
+    }
+
+    setMessage(""); // Clear input after sending
+  };
+
+  const renderChatBubble = ({ item }) => {
+    return (
+      <View style={{ flexDirection: item.sender === "me" ? "row-reverse" : "row", marginBottom: 10 }}>
+        {item.sender !== "me" && (
+          <Image
+            source={imgUrl}
+            style={{ width: hp(4.5), height: hp(4.5), borderRadius: hp(2.25), marginRight: 10 }}
+          />
+        )}
+
+        <View
+          style={{
+            backgroundColor: item.sender === "me" ? "#ff3333" : "#ECECEC", // User messages in pink, others in grey
+            padding: 10,
+            borderRadius: 10,
+            maxWidth: "70%",
+            alignSelf: item.sender === "me" ? "flex-end" : "flex-start",
+          }}
+        >
+          <Text style={{ fontSize: 16, color: item.sender === "me" ? "#fff" : "#000" }}>{item.message}</Text>
+        </View>
+      </View>
+    );
+  };
 
   return (
-    <SafeAreaView className=" justify-center items-center relative bg-white"
-    style={{
-      paddingTop: android ? hp(4) : 0,
-    }}
-    >
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       {/* Header */}
-      <View className="justify-between items-center flex-row w-full px-4 pb-2 border-b border-neutral-400">
-        {/* Arrow */}
-        <TouchableOpacity
-          className="w-2/3 flex-row items-center"
-          onPress={() => navigation.navigate("Chat")}
-        >
-          <ChevronLeftIcon size={hp(2.5)} color={"black"} strokeWidth={2} />
-          <View className="border-2 rounded-full border-red-400 mr-2 ml-4">
-            <Image
-              source={imgUrl}
-              style={{
-                width: hp(4.5),
-                height: hp(4.5),
-              }}
-              className="rounded-full"
-            />
-          </View>
-          <View className="justify-center items-start">
-            <Text className="font-bold text-base">
-              {name}
-              {", "}
-              {age}
-            </Text>
-            <Text className="text-xs text-neutral-400">You matched today</Text>
-          </View>
-        </TouchableOpacity>
-
-        {/* Name */}
-
-        {/* Image */}
-        <View className="w-1/3 items-end ">
-          <View className="bg-black/5 rounded-full p-1">
-            <EllipsisHorizontalIcon
-              size={hp(3)}
-              color={"black"}
-              strokeWidth={2}
-            />
-          </View>
-        </View>
-      </View>
-
-      {/* Chat Details */}
-      <View className="w-full h-full">
-        <Text className="text-center text-neutral-400 pt-4">Today</Text>
-        <FlatList
-          data={chat}
-          keyExtractor={(item, index) => index.toString()}
-          contentContainerStyle={{
-            paddingBottom: hp(15),
-          }}
-          renderItem={({ item }) => (
-            <View
-              style={{
-                flexDirection: item.sender === "me" ? "row-reverse" : "row",
-                padding: 10,
-                paddingVertical: item.sender === "me" ? 13 : 3,
-              }}
-            >
-              <View
-                style={{
-                  // width: item.sender === "me" ? "60%" : "70%",
-                  width: "auto",
-                  maxWidth: item.sender === "me" ? "70%" : "70%",
-                }}
-                className=""
-              >
-                <View
-                  style={{
-                    borderBottomRightRadius: item.sender === "me" ? 0 : 10,
-                    borderBottomLeftRadius: item.sender === "me" ? 10 : 0,
-                    backgroundColor:
-                      item.sender === "me" ? "#171717" : "#3B82F6",
-                    padding: 10,
-                    borderRadius: 10,
-                  }}
-                >
-                  <Text className="text-white text-base leading-5 " style={{}}>
-                    {item.message}
-                  </Text>
-                </View>
-
-                {item.sender === "me" && (
-                  <Text className="text-xs font-semibold text-neutral-500 text-right">
-                    {"Read "}
-                    {item.timestamp}
-                  </Text>
-                )}
-              </View>
-            </View>
-          )}
-        />
-      </View>
-
-      {/* Text Input  */}
-      <View className="absolute flex-row justify-between items-center w-full px-4 pb-12 pt-2 bg-white bottom-0">
-        <View className="flex-row items-center rounded-2xl bg-neutral-200 px-3 py-3 w-[85%] ">
-          <TextInput
-            placeholder="Write your message here"
-            placeholderTextColor={"gray"}
-            style={{
-              fontSize: hp(1.7),
-              fontWeight: "medium",
-            }}
-            className="flex-1 text-base mb-1 pl-1 tracking-wider"
+      <View className="w-full flex-row justify-between items-center px-4 mb-8">
+        <View className="rounded-full items-center justify-center">
+          <Image
+            source={imgUrl}
+            style={{ width: hp(4.5), height: hp(4.5), resizeMode: "cover" }}
+            className="rounded-full"
           />
-
-          <View className="flex-row justify-center items-center space-x-1">
-            <PhotoIcon color={"gray"} strokeWidth={2} />
-            <FaceSmileIcon size={hp(2.5)} color={"gray"} strokeWidth={2} />
-          </View>
         </View>
 
-        <View className="bg-blue-500 rounded-2xl py-3 w-[13%] justify-center items-center ">
-          <PaperAirplaneIcon color={"white"} />
+        <View>
+          <Text className="text-xl font-semibold text-center uppercase">
+            {name}
+          </Text>
         </View>
+
+        <View className="bg-black/10 p-2 rounded-full items-center justify-center">
+          <Ionicons name="notifications-outline" size={25} color="black" />
+        </View>
+      </View>
+
+      {/* Chat List */}
+      <FlatList
+        data={chatMessages} // Use the updated chatMessages state
+        renderItem={renderChatBubble}
+        keyExtractor={(item, index) => index.toString()}
+        contentContainerStyle={{ padding: 20 }}
+      />
+
+      {/* Input Area */}
+      <View style={{ flexDirection: "row", padding: 10, borderTopWidth: 1, borderColor: "#ccc", backgroundColor: "#fff" }}>
+        <TextInput
+          placeholder="Type your message..."
+          value={message}
+          onChangeText={setMessage}
+          style={{
+            flex: 1,
+            borderWidth: 1,
+            borderColor: "#ff3333",
+            borderRadius: 20,
+            padding: 10,
+            marginRight: 10,
+            color: "#000",
+          }}
+        />
+        <TouchableOpacity onPress={handleSendMessage}>
+          <Ionicons name="send" size={24} color="#ff3333" />
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
