@@ -10,14 +10,7 @@ This project demonstrates a user interface for a **Banking Support Chat App** bu
 - **Profile Management**: Access personal account information with settings tailored for banking.
 - **Quick Action Shortcuts**: Direct access to key features such as account settings and transaction history.
 
-## Preview on YouTube
 
-
-<p align="left">
-  <a href="https://www.youtube.com/channel/UCuJNJfjUo2i4c6n09hZTlBQ?sub_confirmation=1">
-    <img alt="Youtube" title="Youtube" src="https://img.shields.io/badge/-Subscribe-red?style=for-the-badge&logo=youtube&logoColor=white"/>
-  </a>
-</p>
 
 ---
 
