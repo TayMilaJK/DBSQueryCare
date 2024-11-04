@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,31 +7,70 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { chatData } from "../constant";
 import { useNavigation } from "@react-navigation/native";
-import { user1 } from "../../assets/images";
+import user10 from "../../assets/images/user10.jpg";
+import { chatData as initialChatData } from "../constant"; // Renamed for initial data
 
 const android = Platform.OS === "ios";
 
 export default function ChatScreen() {
   const navigation = useNavigation();
+  const [chatData, setChatData] = useState(initialChatData); // State to manage chat list
+
+  // Function to simulate creating a new chat
+  const createNewChat = () => {
+    const newChat = {
+      id: chatData.length + 1,
+      name: "New Support Agent",
+      imgUrl: user10,
+      age: null,
+      isOnline: true,
+      timeSent: "Just now",
+      lastMessage: "Welcome to support! How can I assist you today?",
+      chat: [
+        {
+          sender: "me",
+          message: "Hi, I need some help.",
+          timestamp: "10:00 AM",
+        },
+        {
+          sender: "New Support Agent",
+          message: "Welcome to support! How can I assist you today?",
+          timestamp: "10:01 AM",
+        },
+      ],
+    };
+    setChatData([newChat, ...chatData]); // Add new chat to the beginning of the list
+  };
 
   return (
     <SafeAreaView
       style={{
         paddingTop: android ? hp(3) : 0,
-        backgroundColor: "#fff", // Keep the background clean
+        backgroundColor: "#fff",
       }}
     >
       {/* Header */}
-      <View className="px-4 mb-8">
+      <View className="px-4 mb-8 flex-row justify-between items-center">
         <Text className="uppercase font-semibold text-neutral-500 tracking-wider">
           Support Agents
         </Text>
+
+        {/* Button to create a new chat */}
+        <TouchableOpacity
+          onPress={createNewChat}
+          style={{
+            backgroundColor: "#ff3333",
+            paddingVertical: 8,
+            paddingHorizontal: 12,
+            borderRadius: 20,
+          }}
+        >
+          <Text style={{ color: "#fff", fontWeight: "bold" }}>New Chat</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Search Bar */}
@@ -80,7 +120,7 @@ export default function ChatScreen() {
                 }}
               >
                 <Image
-                  source={item.imgUrl || user1} // Ensure fallback image if not available
+                  source={item.imgUrl || user10} // Ensure fallback image if not available
                   style={{
                     width: "90%",
                     height: "90%",

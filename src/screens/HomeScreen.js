@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, Dimensions, TouchableOpacity, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { user1 } from "../../assets/images"; // Use an avatar for the user
+import user10 from "../../assets/images/user10.jpg";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { chatData } from "../constant"; // Importing chatData for balance info
 import { Ionicons } from "@expo/vector-icons"; // For icons
@@ -24,9 +24,9 @@ export default function HomeScreen() {
     >
       {/* Header */}
       <View className="w-full flex-row justify-between items-center px-4 mb-8">
-        <View className="rounded-full items-center justify-center">
+        <View >
           <Image
-            source={user1}
+            source={user10}
             style={{
               width: hp(4.5),
               height: hp(4.5),

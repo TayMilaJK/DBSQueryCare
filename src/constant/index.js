@@ -10,6 +10,8 @@ import {
   user8,
   user9,
 } from "../../assets/images";
+import user10 from "../../assets/images/user10.jpg";
+
 
 export const userData = [
   {
@@ -19,7 +21,7 @@ export const userData = [
     hobbies: ["Concerts", "Festivals", "Photography"],
     bio: "Hey there! My name is Peggie. I'm a passionate fashion photographer with a love for capturing the beauty in everyday life. When I'm not behind the lens, you'll find me immersing myself in the energy of live music at concerts and festivals. Exploring new cultures and cuisines is my idea of a perfect adventure. Let's share stories over a cup of coffee and see where our shared passions take us!",
     distance: "3 miles away",
-    imgPath: user1,
+    imgPath: user10,
   },
   {
     id: 2,
@@ -99,7 +101,7 @@ export const chatData = [
   {
     id: 1,
     name: "AI Bot",
-    imgUrl: user1,
+    imgUrl: user10,
     age: null,
     isOnline: true,
     lastMessage:

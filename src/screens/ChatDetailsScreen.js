@@ -43,7 +43,7 @@ export default function ChatDetailsScreen() {
 
     // Simulate rerouting if needed
     setTimeout(() => {
-      if (teamResponse.sender === "General Support" && userMessage.toLowerCase().includes("fraud")) {
+      if (teamResponse.sender === "Fraud Detection Team" && userMessage.toLowerCase().includes("fraud")) {
         const reroutedMessage = {
           sender: "Fraud Detection Team",
           message: "This issue seems to be fraud-related. Let me reroute you to the Fraud Detection Team.",

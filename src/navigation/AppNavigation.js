@@ -25,7 +25,7 @@ export default function AppNavigation() {
 
             if (route.name === "Home") {
               iconName = "home";
-            } else if (route.name === "Chat") {
+            } else if (route.name === "DBSQueryCare") {
               iconName = "chatbubbles-outline";
             } else if (route.name === "Matches") {
               iconName = "heart-outline";
@@ -57,7 +57,7 @@ export default function AppNavigation() {
       >
         <Tab.Screen name="Home" component={HomeScreen} />
 
-        <Tab.Screen name="Chat" component={ChatScreen} />
+        <Tab.Screen name="DBSQueryCare" component={ChatScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
       </Tab.Navigator>
     );
